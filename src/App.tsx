@@ -1,26 +1,15 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Blackjack from "./Blackjack/Blackjack";
+import { BlackjackGame } from "./Blackjack/BlackjackGame";
+import { FullDeck } from "./Blackjack/Deck";
 
 function App() {
+  const game = new BlackjackGame(new FullDeck());
   return (
     <div className="app">
-      <header className="app-header">
-        Test-Driven-Development Workshop
-      </header>
-      <header className='app-header'>
-        Blackjack
-      </header>
-      <div className="app-body">
-        <div>Dealer Cards: ??</div>
-        <div>User Cards: ??</div>
-        <div>User Score: ??</div>
-        <div className="app-buttons">
-          <button>Start Game</button>
-          <button>Hit</button>
-          <button>Stand</button>
-        </div>
-      </div>
+      <header className="app-header">Test-Driven-Development Workshop</header>
+      <header className="app-header">Blackjack</header>
+      <Blackjack game={game} />
     </div>
   );
 }
