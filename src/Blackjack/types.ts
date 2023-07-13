@@ -1,14 +1,15 @@
 export interface Card {
   value: number | string;
+  suit: string;
   faceUp: boolean;
 }
 
-export interface Deck {
-  draw: (faceUp: boolean) => Card;
+export interface IDeck {
+  draw: (faceUp: boolean) => Card | null;
   reset: () => void;
 }
 
-export interface Game {
+export interface IGame {
   startGame: () => { playerCards: Card[]; dealerCards: Card[] };
   calculateScore: (cards: Card[]) => number;
   hit: () => Card;

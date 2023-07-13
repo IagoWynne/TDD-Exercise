@@ -1,9 +1,9 @@
-import { Card, Game, Deck } from "./types";
+import { Card, IGame, IDeck } from "./types";
 
-export class BlackjackGame implements Game {
-  private deck: Deck;
+export class Game implements IGame {
+  private deck: IDeck;
 
-  constructor(deck: Deck) {
+  constructor(deck: IDeck) {
     this.deck = deck;
   }
 
@@ -37,7 +37,7 @@ export class BlackjackGame implements Game {
     /* requirements
      * Draw a card from the deck and return it
     */
-    return { value: "Ace", faceUp: false };
+    return { value: "Ace", suit: "Spades", faceUp: false };
   }
 
   stand(cards: Card[], playerScore: number): Card[] {

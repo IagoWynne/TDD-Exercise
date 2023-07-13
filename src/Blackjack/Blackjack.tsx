@@ -1,8 +1,8 @@
 import { useState } from "react";
 import "./Blackjack.css";
-import { GameState, Card, Game } from "./types";
+import { GameState, Card, IGame } from "./types";
 
-const Blackjack: React.FunctionComponent<{ game: Game }> = ({ game }) => {
+const Blackjack: React.FunctionComponent<{ game: IGame }> = ({ game }) => {
   /*
    * requirements
    * Pressing the Start button should:
@@ -39,14 +39,19 @@ const Blackjack: React.FunctionComponent<{ game: Game }> = ({ game }) => {
   const [dealerScore, setDealerScore] = useState<number | null>(null);
 
   const onStart = () => {
-    setGameState("IN_PROGRESS");
-
     const startingCards = game.startGame();
 
     setPlayerCards(startingCards.playerCards);
     setDealerCards(startingCards.dealerCards);
 
-    setPlayerScore(game.calculateScore(playerCards));
+    const playerScore = game.calculateScore(playerCards);
+    setPlayerScore(playerScore);
+
+    if (playerScore === 21) {
+      setGameState("WON");
+    } else {
+      setGameState("IN_PROGRESS");
+    }
   };
 
   const onHit = () => {};
@@ -55,14 +60,43 @@ const Blackjack: React.FunctionComponent<{ game: Game }> = ({ game }) => {
 
   return (
     <div className="game">
+      {playerCards.length > 0 && (
+        <>
+          <div data-testid="player-cards">
+            {playerCards.map((card, idx) => (
+              <div key={idx}>
+                {card.value} of {card.suit}
+              </div>
+            ))}
+          </div>
+          <div data-testid="player-score">Score: {playerScore}</div>
+        </>
+      )}
+      {dealerCards.length > 0 && (
+        <div data-testid="dealer-cards">
+          {dealerCards.map((card, idx) => (
+            <div key={idx}>
+              {card.faceUp ? card.value : "??"} of{" "}
+              {card.faceUp ? card.suit : "??"}
+            </div>
+          ))}
+        </div>
+      )}
+      {gameState === "WON" && <div data-testid="win-screen">You Win!</div>}
       <div className="game-buttons">
         {gameState !== "IN_PROGRESS" && (
-          <button onClick={onStart}>Start Game</button>
+          <button data-testid="start-button" onClick={onStart}>
+            Start Game
+          </button>
         )}
         {gameState === "IN_PROGRESS" && (
           <>
-            <button onClick={onHit}>Hit</button>
-            <button onClick={onStand}>Stand</button>
+            <button data-testid="hit-button" onClick={onHit}>
+              Hit
+            </button>
+            <button data-testid="stand-button" onClick={onStand}>
+              Stand
+            </button>
           </>
         )}
       </div>

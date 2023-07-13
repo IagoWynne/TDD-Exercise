@@ -1,10 +1,10 @@
 import "./App.css";
 import Blackjack from "./Blackjack/Blackjack";
-import { BlackjackGame } from "./Blackjack/BlackjackGame";
-import { FullDeck } from "./Blackjack/Deck";
+import { Game } from "./Blackjack/Game";
+import { Deck } from "./Blackjack/Deck";
 
 function App() {
-  const game = new BlackjackGame(new FullDeck());
+  const game = new Game(new Deck());
   return (
     <div className="app">
       <header className="app-header">Test-Driven-Development Workshop</header>
