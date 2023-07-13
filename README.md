@@ -1,46 +1,42 @@
-# Getting Started with Create React App
+# TDD - Building a Blackjack Game
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Goal: To build a blackjack game react app using the principles of test-driven development.
 
-## Available Scripts
+You can ignore everything that isn't in `/src/Blackjack` - this is all just code for running the react app.
 
-In the project directory, you can run:
+Within the blackjack folder is:
+- `__tests__` - this folder contains all the test files
 
-### `npm start`
+- `Deck.ts` - an example file that has already been written in a TDD manner. We will go through this file and its tests before we start the exercise.
+- `Game.ts` - a file with just the basics added so the code compiles. We will do some of the tests and code for this as a worked example
+- `Blackjack.tsx` - this is the react component for the game. The code to start the game has already been written and tested. We will go through this during the exercise, and do the tests and code for another function as a worked example.
+  - Note: `Blackjack.css` contains all the css for this... it's not really got much in there. Once you have completed the tests and app, you can fiddle with the css if you want to make it look pretty.
+- `types.ts` - this contains some types that have been set up to represent the data. You shouldn't need to edit this, but can if you want.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+## Running the Code
+- To run the tests, use `npm test`
+  - This will run the tests in watch mode - whenever you make a change to the tests or the code, this will re-run all the tests. There are other ways to do this, and most SBG projects don't actually do it this way.
+- You won't really be running the app much today unless you finish the exercise. If you want to, you can use `npm start`
+- The original create-react-app readme is included if you want to refer to it.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+## Aside: How to play Blackjack
+- Goal: beat the dealer's hand without scoring more than 21
+- You are dealt two cards at the start of the round and add up their values
+- Cards 2-10 have face value; King, Queen, Jack are worth 10; Aces are 1 or 11 - your choice
+- You can ask the dealer to deal you another card ("Hit")
+- If you do not want any more cards at all, you "Stand"
+- If you go over 21, you have gone "Bust"
+- The dealer is also dealt two cards at the start of the round, one face up, and one face down. Once you have decided to "Stand", the dealer then reveals their face down card and can also choose to "hit" to try and reach 21 or "stand"
+- The winner is whoever has the highest hand without going bust
 
-### `npm test`
+## Aside: How to play Blackjack - some example hands
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
-
-### `npm run build`
-
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
-
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
-
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
-
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
-
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
-
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+| Cards | Score |
+| --- | ---|
+| 5, 8 | 13 |
+| Queen, King | 20 |
+| Jack, 9 | 19 |
+| Jack, Ace | 21 (Blackjack!) |
+| 5, 8, Queen | 23 (Bust) |
+| Queen, King, Ace | 21 |
+| Jack, 9, Ace | 20 |
