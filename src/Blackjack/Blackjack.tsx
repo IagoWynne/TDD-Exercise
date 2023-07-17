@@ -57,7 +57,7 @@ const Blackjack: React.FunctionComponent<{ game: IGame }> = ({ game }) => {
         <>
           <div data-testid="player-cards">
             {playerCards.map((card, idx) => (
-              <div key={idx}>
+              <div key={idx} data-testid={`player-card-${idx}`}>
                 {card.value} of {card.suit}
               </div>
             ))}
@@ -68,7 +68,7 @@ const Blackjack: React.FunctionComponent<{ game: IGame }> = ({ game }) => {
       {dealerCards.length > 0 && (
         <div data-testid="dealer-cards">
           {dealerCards.map((card, idx) => (
-            <div key={idx}>
+            <div key={idx} data-testid={`dealer-card-${idx}`}>
               {card.faceUp ? card.value : "??"} of{" "}
               {card.faceUp ? card.suit : "??"}
             </div>

@@ -1,19 +1,22 @@
 describe("BlackjackGame", () => {
   describe("startGame", () => {
+    it("resets the deck", () => {
+      // worked example
+    });
+
     it("returns two cards for the player and two for the dealer", () => {
-        // worked example
-    })
+      // worked example
+    });
 
     it("draws cards in the correct order", () => {
-        /* the correct order is:
-         * draw one card for the player, face up
-         * draw one card for the dealer, face up
-         * draw one card for the player, face up
-         * draw one card for the dealer, face down
-        */
-
-        // worked example
-    })
+      /* the correct order is:
+       * draw one card for the player, face up
+       * draw one card for the dealer, face up
+       * draw one card for the player, face up
+       * draw one card for the dealer, face down
+       */
+      // worked example
+    });
   });
 
   describe("calculateScore", () => {

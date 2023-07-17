@@ -9,6 +9,7 @@ export class Game implements IGame {
 
   startGame() {
     /* requirements:
+     * Reset the deck
      * Draw two cards from the deck for the player and two for the dealer
      * The cards should be drawn in the following order:
       * draw one card for the player

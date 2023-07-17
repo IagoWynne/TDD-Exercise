@@ -83,15 +83,17 @@ describe("Blackjack", () => {
         });
 
         // assert
-        // find a container for the player cards - test fails if this can't find the element
+        // find a container for the player cards, and the cards themselves - test fails if this can't find the element
         const playerCards = screen.getByTestId("player-cards");
+        const playerCard1 = screen.getByTestId("player-card-0"); //remember that javascript arrays are 0-indexed!
+        const playerCard2 = screen.getByTestId("player-card-1");
 
         expect(playerCards).toBeInTheDocument();
-        // we know we've got two cards at the start of the game... so there should be two child containers
-        expect(playerCards.children.length).toBe(2);
-        // we check the text content of each child to confirm that both our cards are there
-        expect(playerCards.children[0].textContent).toBe("5 of hearts");
-        expect(playerCards.children[1].textContent).toBe("3 of spades");
+        expect(playerCard1).toBeInTheDocument();
+        expect(playerCard2).toBeInTheDocument();
+        // we check the text content of each card
+        expect(playerCard1.textContent).toBe("5 of hearts");
+        expect(playerCard2.textContent).toBe("3 of spades");
       });
 
       it("shows the player their score", () => {
@@ -138,14 +140,16 @@ describe("Blackjack", () => {
 
         // assert
         const dealerCards = screen.getByTestId("dealer-cards");
+        const dealerCard1 = screen.getByTestId("dealer-card-0");
+        const dealerCard2 = screen.getByTestId("dealer-card-1");
 
         expect(dealerCards).toBeInTheDocument();
-        // the dealer has two cards at the start of the game
-        expect(dealerCards.children.length).toBe(2);
+        expect(dealerCard1).toBeInTheDocument();
+        expect(dealerCard2).toBeInTheDocument();
         // we check the text content of each child. First one is face up, so we expect the card value
-        expect(dealerCards.children[0].textContent).toBe("ace of diamonds");
+        expect(dealerCard1.textContent).toBe("ace of diamonds");
         // second one is face down, so we expect the value and suit to be hidden
-        expect(dealerCards.children[1].textContent).toBe("?? of ??");
+        expect(dealerCard2.textContent).toBe("?? of ??");
       });
 
       it("shows the Hit button", () => {
