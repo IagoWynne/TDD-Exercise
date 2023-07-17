@@ -202,7 +202,7 @@ describe("Blackjack", () => {
 
     // what happens if the player wins outright?
     describe("player gets a blackjack", () => {
-      it("shows 'You Win!' if the player's score is 21", () => {
+      it("shows 'You Win!'", () => {
         // arrange
         mockCalcScore.mockReturnValueOnce(21);
         render(<Blackjack game={mockGame} />);
@@ -219,7 +219,7 @@ describe("Blackjack", () => {
         expect(winScreen.textContent).toBe("You Win!");
       });
 
-      it("shows the Start button if the player's score is 21", () => {
+      it("shows the Start button", () => {
         // arrange
         mockCalcScore.mockReturnValueOnce(21);
         render(<Blackjack game={mockGame} />);
@@ -234,7 +234,7 @@ describe("Blackjack", () => {
         expect(startButton).toBeInTheDocument();
       });
 
-      it("does not show the Hit or Stand buttons of the player's score is 21", () => {
+      it("does not show the Hit or Stand buttons", () => {
         // arrange
         mockCalcScore.mockReturnValueOnce(21);
         render(<Blackjack game={mockGame} />);

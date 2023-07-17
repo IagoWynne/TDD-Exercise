@@ -14,6 +14,7 @@ Within the blackjack folder is:
 - `types.ts` - this contains some types that have been set up to represent the data. You shouldn't need to edit this, but can if you want.
 
 ## Running the Code
+- Before doing anything else, run `npm install`
 - To run the tests, use `npm test`
   - This will run the tests in watch mode - whenever you make a change to the tests or the code, this will re-run all the tests. There are other ways to do this, and most SBG projects don't actually do it this way.
 - You won't really be running the app much today unless you finish the exercise. If you want to, you can use `npm start`
