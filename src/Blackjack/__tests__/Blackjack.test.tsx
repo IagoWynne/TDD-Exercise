@@ -262,10 +262,413 @@ describe("Blackjack", () => {
   });
 
   describe("hit", () => {
-    // worked example
+    beforeEach(() => {
+      // before every test here, we will want the game to have started
+      // we can put that code here and make sure our component is in the same state before each test
+
+      render(<Blackjack game={mockGame} />);
+
+      mockStartGame.mockReturnValueOnce({
+        playerCards: [
+          { value: 5, suit: "hearts", faceUp: true },
+          { value: 3, suit: "spades", faceUp: true },
+        ],
+        dealerCards: [],
+      });
+
+      const startButton = screen.getByTestId("start-button");
+
+      // we still have to wrap the click in "act" since it changes the component state
+      act(() => startButton.click());
+
+      // reset mocks so that we don't have to worry about mock executions from setup
+      jest.resetAllMocks();
+
+      // set up mockHit implementation so we don't get errors
+      mockHit.mockImplementation(() => ({
+        value: "queen",
+        suit: "hearts",
+        faceUp: true,
+      }));
+    });
+
+    describe("general play", () => {
+      it("calls hit", () => {
+        // arrange
+        const hitButton = screen.getByTestId("hit-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        expect(mockHit).toHaveBeenCalledTimes(1);
+      });
+
+      it("displays the player's new card", () => {
+        // arrange
+        mockHit.mockImplementationOnce(() => ({
+          value: "ace",
+          suit: "diamonds",
+          faceUp: true,
+        }));
+
+        const hitButton = screen.getByTestId("hit-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        // we know that there are already two cards on display, so our new card should be the third
+        const newCard = screen.getByTestId("player-card-2"); // 0-indexed!
+
+        expect(newCard.textContent).toBe("ace of diamonds");
+      });
+
+      it("calculates and displays the player's new score", () => {
+        // arrange
+        const scoreDisplay = screen.getByTestId("player-score");
+
+        mockCalcScore.mockImplementationOnce(() => 17);
+
+        const hitButton = screen.getByTestId("hit-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        expect(scoreDisplay.textContent).toBe("Score: 17");
+      });
+    });
+
+    describe("player goes bust", () => {
+      it("shows 'You went bust!'", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const hitButton = screen.getByTestId("hit-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        const bustScreen = screen.getByTestId("bust-screen");
+
+        expect(bustScreen.textContent).toBe("You went bust!");
+      });
+
+      it("hides the Hit and Stand buttons", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const hitButton = screen.getByTestId("hit-button");
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        expect(hitButton).not.toBeInTheDocument();
+        expect(standButton).not.toBeInTheDocument();
+      });
+
+      it("shows the Start button", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const hitButton = screen.getByTestId("hit-button");
+
+        // act
+        act(() => hitButton.click());
+
+        // assert
+        const startButton = screen.getByTestId("start-button");
+        expect(startButton).toBeInTheDocument();
+      });
+    });
   });
 
   describe("stand", () => {
-    // write some tests here
+    beforeEach(() => {
+      // before every test here, we will want the game to have started
+      // we can put that code here and make sure our component is in the same state before each test
+
+      render(<Blackjack game={mockGame} />);
+
+      mockStartGame.mockReturnValueOnce({
+        playerCards: [],
+        dealerCards: [
+          { value: 4, suit: "clubs", faceUp: true },
+          { value: 6, suit: "diamonds", faceUp: false },
+        ],
+      });
+
+      const startButton = screen.getByTestId("start-button");
+
+      // mocking a player score so we can check win/draw/lose conditions
+      mockCalcScore.mockImplementationOnce(() => 20);
+
+      // we still have to wrap the click in "act" since it changes the component state
+      act(() => startButton.click());
+
+      // reset mocks so that we don't have to worry about mock executions from setup
+      jest.resetAllMocks();
+
+      // set up mockHit implementation so we don't get errors
+      mockStand.mockImplementation(() => [
+        { value: 4, suit: "clubs", faceUp: true },
+        { value: 6, suit: "diamonds", faceUp: false },
+        { value: "ace", suit: "hearts", faceUp: true },
+      ]);
+    });
+
+    describe("general behaviour", () => {
+      it("calls the stand function", () => {
+        // arrange
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(mockStand).toHaveBeenCalledTimes(1);
+      });
+
+      it("shows all the dealer's cards", () => {
+        // arrange
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const dealerCard1 = screen.getByTestId("dealer-card-0");
+        const dealerCard2 = screen.getByTestId("dealer-card-1");
+        const dealerCard3 = screen.getByTestId("dealer-card-2");
+
+        // we're using the mock implementation we set up in beforeEach for these cards
+        expect(dealerCard1.textContent).toBe("4 of clubs");
+        expect(dealerCard2.textContent).toBe("6 of diamonds");
+        expect(dealerCard3.textContent).toBe("ace of hearts");
+      });
+
+      it("calls calculate score with the dealer's hand", () => {
+        // arrange
+        const finalHand = [
+          { value: 4, suit: "clubs", faceUp: true },
+          { value: 6, suit: "diamonds", faceUp: false },
+          { value: "ace", suit: "hearts", faceUp: true },
+        ];
+        mockStand.mockImplementation(() => finalHand);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(mockCalcScore).toHaveBeenCalledTimes(1);
+        expect(mockCalcScore).toHaveBeenCalledWith(finalHand);
+      });
+
+      it("displays the dealer's score", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 19);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const dealerScore = screen.getByTestId("dealer-score");
+
+        expect(dealerScore).toBeInTheDocument();
+        expect(dealerScore.textContent).toBe("Dealer Score: 19");
+      });
+    });
+
+    describe("if the player score is higher than the dealer score", () => {
+      it("shows 'You Win!'", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 19);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const winScreen = screen.getByTestId("win-screen");
+
+        expect(winScreen.textContent).toBe("You Win!");
+      });
+
+      it("hides the Hit and Stand buttons", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 19);
+
+        const hitButton = screen.getByTestId("hit-button");
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(hitButton).not.toBeInTheDocument();
+        expect(standButton).not.toBeInTheDocument();
+      });
+
+      it("shows the Start button", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 19);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const startButton = screen.getByTestId("start-button");
+        expect(startButton).toBeInTheDocument();
+      });
+    });
+
+    describe("dealer goes bust", () => {
+      it("shows 'You Win!'", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const winScreen = screen.getByTestId("win-screen");
+
+        expect(winScreen.textContent).toBe("You Win!");
+      });
+
+      it("hides the Hit and Stand buttons", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const hitButton = screen.getByTestId("hit-button");
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(hitButton).not.toBeInTheDocument();
+        expect(standButton).not.toBeInTheDocument();
+      });
+
+      it("shows the Start button", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 22);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const startButton = screen.getByTestId("start-button");
+        expect(startButton).toBeInTheDocument();
+      });
+    });
+
+    describe("if the player score is lower than the dealer score", () => {
+      it("shows 'You lose :('", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 21);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const winScreen = screen.getByTestId("lose-screen");
+
+        expect(winScreen.textContent).toBe("You lose :(");
+      });
+
+      it("hides the Hit and Stand buttons", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 21);
+
+        const hitButton = screen.getByTestId("hit-button");
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(hitButton).not.toBeInTheDocument();
+        expect(standButton).not.toBeInTheDocument();
+      });
+
+      it("shows the Start button", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 21);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const startButton = screen.getByTestId("start-button");
+        expect(startButton).toBeInTheDocument();
+      });
+    });
+
+    describe("if the player score equals the dealer score", () => {
+      it("shows 'Draw'", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 20);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const winScreen = screen.getByTestId("draw-screen");
+
+        expect(winScreen.textContent).toBe("Draw");
+      });
+
+      it("hides the Hit and Stand buttons", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 20);
+
+        const hitButton = screen.getByTestId("hit-button");
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        expect(hitButton).not.toBeInTheDocument();
+        expect(standButton).not.toBeInTheDocument();
+      });
+
+      it("shows the Start button", () => {
+        // arrange
+        mockCalcScore.mockImplementationOnce(() => 20);
+
+        const standButton = screen.getByTestId("stand-button");
+
+        // act
+        act(() => standButton.click());
+
+        // assert
+        const startButton = screen.getByTestId("start-button");
+        expect(startButton).toBeInTheDocument();
+      });
+    });
   });
 });
